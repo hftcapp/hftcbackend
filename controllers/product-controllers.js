@@ -1,5 +1,6 @@
 const Product = require("../Models/Product");
 const Images = require("../Models/Images");
+const Productrecom = require("../Models/Productsrecom");
 
 const addProduct = (req, res) => {
   const { name, price, quantity, description, ingredients, images } = req.body;
@@ -147,6 +148,24 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getProduct = async (req, res) => {
+  console.log("getting");
+  const product = await Product.findOne({ _id: req.body.id });
+  // console.log(products);
+  if (product) {
+    res.json({
+      success: true,
+      product: product,
+      message: "product product Found",
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "Error Finding Products",
+    });
+  }
+};
+
 const getProductImages = async (req, res) => {
   console.log("getting");
   const images = await Images.findOne({ _id: req.body.id });
@@ -182,10 +201,115 @@ const getProducts = async (req, res) => {
   // }
 };
 
+const getProductRecom = async (req, res) => {
+  const productsList = await Productrecom.find();
+  if (productsList) {
+    let products = await Product.find({ _id: productsList });
+    if (products) {
+      res.json({
+        success: true,
+        products: products,
+        message: " products Found",
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "Error Finding Products",
+      });
+    }
+  }
+  // console.log(products);
+};
+
+const getProductRecomIds = async (req, res) => {
+  const productsList = await Productrecom.find({});
+  console.log(productsList);
+  if (productsList) {
+    res.json({
+      success: true,
+      products: productsList[0],
+      message: " products iDs Found",
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "Error Finding Products",
+    });
+  }
+  // console.log(products);
+};
+
+const addProductRecom = async (req, res) => {
+  const { id, productsList } = req.body;
+  console.log(productsList);
+
+  const foundList = await Productrecom.findOne({ _id: id });
+  console.log(foundList);
+  if (foundList) {
+    try {
+      let updatedQuestion = Productrecom.updateOne(
+        { _id: id },
+
+        {
+          $set: { productsIds: productsList },
+        }
+      )
+        .then((response) => {
+          console.log(response);
+          res.json({ success: true, message: "List Updated" });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.json({ success: false, message: "List  Updating Error" });
+        });
+    } catch (err) {
+      console.log(err);
+      res.json({
+        success: false,
+        message: "Failed updating",
+      });
+    }
+  } else {
+    const createdList = new Productrecom({
+      productIds: productsList,
+    });
+
+    try {
+      createdList.save((err) => {
+        if (err) {
+          res.json({
+            success: false,
+            data: err,
+            message: "Creating List failed",
+          });
+          return;
+        } else {
+          console.log({ message: "List created", createdList });
+
+          res.status(200).send({
+            message: "List created",
+            success: true,
+          });
+        }
+      });
+    } catch (err) {
+      res.json({
+        success: false,
+        data: err,
+        message: "Creating List failed",
+      });
+    }
+  }
+};
+
 module.exports = {
   addProduct,
   getProducts,
   getProductImages,
   editProduct,
   deleteProduct,
+  getProduct,
+  addProductRecom,
+  getProductRecom,
+  getProductRecomIds,
 };

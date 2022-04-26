@@ -14,4 +14,8 @@ router.post("/newotp", usersController.requestNewEmailOtp);
 router.post("/login", usersController.login);
 router.post("/forgotpassword", usersController.newPassword);
 
+router.post("/editbio", usersController.editBio);
+router.post("/edituserinfo", usersController.editUserInfo);
+router.post("/edituserimage", usersController.updateUserImage);
+
 module.exports = router;

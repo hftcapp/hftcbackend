@@ -6,6 +6,14 @@ const usersRoutes = require("./Routes/User-routes");
 const quizRoutes = require("./Routes/Quiz-routes");
 const quoteRoutes = require("./Routes/Quotes-routes");
 const productRoutes = require("./Routes/Product-routes");
+const styleRoutes = require("./Routes/Style-routes");
+const salonRoutes = require("./Routes/Salon-routes");
+const appImagesRoutes = require("./Routes/Appimages-routes");
+const hairJournalRoutes = require("./Routes/Hairjournal-routes");
+const productUseRoutes = require("./Routes/Productuse-routes");
+const protectiveStyleRoutes = require("./Routes/Protectivestyle-routes");
+const salonVisitRoutes = require("./Routes/Salonvisit-routes");
+const goalsRoutes = require("./Routes/Goals-routes");
 const productScoreRecomRoutes = require("./Routes/Productscorerecom-routes");
 
 const PORT = process.env.PORT || 3001;
@@ -52,6 +60,14 @@ app.use("/api/quiz", quizRoutes);
 app.use("/api/productscorerecom", productScoreRecomRoutes);
 app.use("/api/quote", quoteRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/style", styleRoutes);
+app.use("/api/salon", salonRoutes);
+app.use("/api/appimages", appImagesRoutes);
+app.use("/api/hairjournal", hairJournalRoutes);
+app.use("/api/productuse", productUseRoutes);
+app.use("/api/protectivestyle", protectiveStyleRoutes);
+app.use("/api/salonvisit", salonVisitRoutes);
+app.use("/api/goals", goalsRoutes);
 
 app.listen(PORT, () => {
   console.log("listening on " + PORT);

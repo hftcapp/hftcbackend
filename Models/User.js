@@ -12,6 +12,11 @@ const userSchema = new Schema({
   emailVerified: { type: Boolean, default: false },
   emailVerificationCode: { type: String },
   image: { type: String },
+  bio: { type: String },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // userSchema.plugin(uniqueValidator);

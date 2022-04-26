@@ -1,6 +1,7 @@
 const Quiz = require("../Models/Quiz");
 const Quizresult = require("../Models/Quizresult");
 const Productsscoresecom = require("../Models/Productscorerecom");
+const Product = require("../Models/Product");
 
 const addQuestion = async (req, res) => {
   console.log(req.body);
@@ -106,55 +107,100 @@ const getQuestions = async (req, res) => {
 const saveQuizResult = async (req, res) => {
   const { answers, result, userId } = req.body;
 
-  const createdQuizResult = new Quizresult({
-    answers: answers,
-    result,
-    user: userId,
-  });
-  try {
-    createdQuizResult.save(async (err) => {
-      if (err) {
-        res.json({
-          success: false,
-          data: err,
-          message: "Result saving failed",
-        });
-        return;
-      } else {
-        console.log({ message: "Result Saved", createdQuizResult });
-        let products;
-        if (result === 1) {
-          products = await Productsscoresecom.find({ name: "1" });
-          res.status(200).send({
-            message: "Your Result is saved",
-            success: true,
-            products,
-          });
-          return;
-        } else if (result === 2) {
-          products = await Productsscoresecom.find({ name: "2" });
-          res.status(200).send({
-            message: "Your Result is saved",
-            success: true,
-            products,
-          });
-          return;
-        } else if (result === 3) {
-          products = await Productsscoresecom.find({ name: "3" });
-          res.status(200).send({
-            message: "Your Result is saved",
-            success: true,
-            products,
-          });
-          return;
-        }
-      }
+  if (answers && result && userId) {
+    const createdQuizResult = new Quizresult({
+      answers: answers,
+      result,
+      user: userId,
     });
-  } catch (err) {
+    try {
+      createdQuizResult.save(async (err) => {
+        if (err) {
+          res.json({
+            success: false,
+            data: err,
+            message: "Result saving failed",
+          });
+          return;
+        } else {
+          console.log({ message: "Result Saved", createdQuizResult });
+          let productsIds;
+          if (result === 1) {
+            productsIds = await Productsscoresecom.findOne({ name: "1" });
+            console.log(productsIds);
+            try {
+              let products = await Product.find({
+                _id: productsIds.products,
+              });
+              res.status(200).send({
+                message: "Your Result is saved",
+                success: true,
+                products,
+              });
+              return;
+            } catch (err) {
+              console.log(err);
+              res.json({
+                success: false,
+                message: "Products fecthing Failed",
+                data: err,
+              });
+            }
+          } else if (result === 2) {
+            productsids = await Productsscoresecom.findOne({ name: "2" });
+            try {
+              let products = await Product.find({
+                _id: productsIds.products,
+              });
+              res.status(200).send({
+                message: "Your Result is saved",
+                success: true,
+                products,
+              });
+              return;
+            } catch (err) {
+              console.log(err);
+              res.json({
+                success: false,
+                message: "Products fecthing Failed",
+                data: err,
+              });
+            }
+          } else if (result === 3) {
+            productsIds = await Productsscoresecom.findOne({ name: "3" });
+            try {
+              let products = await Product.find({
+                _id: productsIds.products,
+              });
+              res.status(200).send({
+                message: "Your Result is saved",
+                success: true,
+                products,
+              });
+              return;
+            } catch (err) {
+              console.log(err);
+              res.json({
+                success: false,
+                message: "Products fecthing Failed",
+                data: err,
+              });
+            }
+          }
+        }
+      });
+    } catch (err) {
+      res.json({
+        success: false,
+        data: err,
+        message: "Result Saving failed",
+      });
+      return;
+    }
+  } else {
     res.json({
       success: false,
-      data: err,
-      message: "Result Saving failed",
+      message: "All fields are required",
     });
   }
 };

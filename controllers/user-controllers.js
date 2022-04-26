@@ -210,32 +210,41 @@ const emailVerify = async (req, res) => {
 const requestNewEmailOtp = async (req, res) => {
   console.log(req.body);
   const { email } = req.body;
-  let otpEmail = otpGenerator.generate(4, {
-    upperCase: false,
-    specialChars: false,
-    alphabets: false,
-  });
-  sendEmailOtp(email, otpEmail);
 
-  User.updateOne(
-    { email: email },
-    { $set: { emailVerificationCode: otpEmail } },
-    function (err) {
-      if (!err) {
-        console.log("Otp Email Updated");
-        return res.json({
-          success: true,
-          message: "New OTP Sent to your email",
-        });
-      } else {
-        res.json({
-          success: false,
-          message: "Something went wrong",
-        });
-        return;
+  let user = await User.findOne({ email: email }, "-password");
+  if (user) {
+    let otpEmail = otpGenerator.generate(4, {
+      upperCase: false,
+      specialChars: false,
+      alphabets: false,
+    });
+    sendEmailOtp(email, otpEmail);
+
+    User.updateOne(
+      { email: email },
+      { $set: { emailVerificationCode: otpEmail } },
+      function (err) {
+        if (!err) {
+          console.log("Otp Email Updated");
+          return res.json({
+            success: true,
+            message: "New OTP Sent to your email",
+          });
+        } else {
+          res.json({
+            success: false,
+            message: "Something went wrong",
+          });
+          return;
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      success: false,
+      message: "User Email not exist",
+    });
+  }
 };
 
 const login = async (req, res, next) => {
@@ -250,6 +259,7 @@ const login = async (req, res, next) => {
     console.log(err);
     res.json({
       success: false,
+      data: err,
       message: "Logging in failed, please try again later.",
     });
     return;
@@ -317,6 +327,8 @@ const login = async (req, res, next) => {
     emailVerificationCode: existingUser.emailVerificationCode,
     emailVerified: existingUser.emailVerified,
     image: existingUser.image,
+    bio: existingUser.bio,
+    birthday: existingUser.birthday,
   });
 };
 
@@ -383,6 +395,85 @@ const newPassword = async (req, res) => {
     });
   }
 };
+
+const editBio = async (req, res) => {
+  const { id, bio } = req.body;
+
+  User.updateOne({ _id: id }, { $set: { bio: bio } }, function (err) {
+    if (!err) {
+      console.log("Bio Updated");
+      return res.json({
+        success: true,
+        message: "Bio Updated",
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "Something went wrong",
+      });
+      return;
+    }
+  });
+};
+
+const editUserInfo = async (req, res) => {
+  const { id, username, birthday } = req.body;
+
+  if (username && birthday) {
+    User.updateOne(
+      { _id: id },
+      { $set: { username, birthday } },
+      function (err) {
+        if (!err) {
+          console.log("User Info Updated");
+          return res.json({
+            success: true,
+            message: "User info Updated",
+          });
+        } else {
+          res.json({
+            success: false,
+            message: "Something went wrong",
+          });
+          return;
+        }
+      }
+    );
+  } else {
+    res.json({
+      success: false,
+      message: "Both Username and birthday required",
+    });
+  }
+};
+
+const updateUserImage = async (req, res) => {
+  const { id, image } = req.body;
+
+  if (id && image) {
+    User.updateOne({ _id: id }, { $set: { image, image } }, function (err) {
+      if (!err) {
+        console.log("User Image Updated");
+        return res.json({
+          success: true,
+          message: "User Image Updated",
+        });
+      } else {
+        res.json({
+          success: false,
+          message: "Something went wrong",
+        });
+        return;
+      }
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "Id and Image needed",
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -391,4 +482,7 @@ module.exports = {
   newPassword,
   getUsers,
   deleteUsers,
+  editBio,
+  editUserInfo,
+  updateUserImage,
 };

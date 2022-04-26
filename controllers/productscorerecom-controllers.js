@@ -25,7 +25,7 @@ const addList = async (req, res) => {
       console.log(err);
       res.json({
         success: false,
-        message: "Error Saving ImagesS",
+        message: "Failed updating",
       });
     }
   } else {
@@ -62,8 +62,8 @@ const addList = async (req, res) => {
   }
 };
 
-const getLists = (req, res) => {
-  const lists = Productscorerecom.find({});
+const getLists = async (req, res) => {
+  const lists = await Productscorerecom.find({});
   if (lists) {
     res.json({
       success: true,
