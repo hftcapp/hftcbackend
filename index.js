@@ -16,6 +16,7 @@ const productUseRoutes = require("./Routes/Productuse-routes");
 const protectiveStyleRoutes = require("./Routes/Protectivestyle-routes");
 const salonVisitRoutes = require("./Routes/Salonvisit-routes");
 const goalsRoutes = require("./Routes/Goals-routes");
+const suggestionsRoutes = require("./Routes/Suggestions-routes");
 const productScoreRecomRoutes = require("./Routes/Productscorerecom-routes");
 
 const PORT = process.env.PORT || 3001;
@@ -72,6 +73,7 @@ app.use("/api/productuse", productUseRoutes);
 app.use("/api/protectivestyle", protectiveStyleRoutes);
 app.use("/api/salonvisit", salonVisitRoutes);
 app.use("/api/goals", goalsRoutes);
+app.use("/api/suggestions", suggestionsRoutes);
 
 app.listen(PORT, () => {
   console.log("listening on " + PORT);
