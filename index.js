@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 
 const usersRoutes = require("./Routes/User-routes");
 const quizRoutes = require("./Routes/Quiz-routes");
+const weekQuizRoutes = require("./Routes/Weekquiz-routes");
+const monthQuizRoutes = require("./Routes/Monthquiz-routes");
 const quoteRoutes = require("./Routes/Quotes-routes");
 const productRoutes = require("./Routes/Product-routes");
 const styleRoutes = require("./Routes/Style-routes");
@@ -57,6 +59,8 @@ app.use((req, res, next) => {
 
 app.use("/api/users", usersRoutes);
 app.use("/api/quiz", quizRoutes);
+app.use("/api/weekquiz", weekQuizRoutes);
+app.use("/api/monthquiz", monthQuizRoutes);
 app.use("/api/productscorerecom", productScoreRecomRoutes);
 app.use("/api/quote", quoteRoutes);
 app.use("/api/product", productRoutes);

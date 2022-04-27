@@ -2,6 +2,7 @@ const Quiz = require("../Models/Quiz");
 const Quizresult = require("../Models/Quizresult");
 const Productsscoresecom = require("../Models/Productscorerecom");
 const Product = require("../Models/Product");
+const User = require("../Models/User");
 
 const addQuestion = async (req, res) => {
   console.log(req.body);
@@ -114,7 +115,7 @@ const saveQuizResult = async (req, res) => {
       user: userId,
     });
     try {
-      createdQuizResult.save(async (err) => {
+      createdQuizResult.save(async (err, data) => {
         if (err) {
           res.json({
             success: false,
@@ -123,70 +124,96 @@ const saveQuizResult = async (req, res) => {
           });
           return;
         } else {
-          console.log({ message: "Result Saved", createdQuizResult });
-          let productsIds;
-          if (result === 1) {
-            productsIds = await Productsscoresecom.findOne({ name: "1" });
-            console.log(productsIds);
-            try {
-              let products = await Product.find({
-                _id: productsIds.products,
-              });
-              res.status(200).send({
-                message: "Your Result is saved",
-                success: true,
-                products,
-              });
-              return;
-            } catch (err) {
-              console.log(err);
-              res.json({
-                success: false,
-                message: "Products fecthing Failed",
-                data: err,
-              });
+          User.updateOne(
+            { _id: userId },
+            { $set: { latestResult: data._id } },
+            async function (err) {
+              if (!err) {
+                console.log("User result Updated");
+                //   return res.json({
+                //     success: true,
+                //     message: "User result Updated",
+                //   });
+                console.log({ message: "Result Saved" });
+                let productsIds;
+                if (result === 1) {
+                  productsIds = await Productsscoresecom.findOne({
+                    name: "1",
+                  });
+                  console.log(productsIds);
+                  try {
+                    let products = await Product.find({
+                      _id: productsIds.products,
+                    });
+                    res.status(200).send({
+                      message: "Your Result is saved",
+                      success: true,
+                      products,
+                    });
+                    return;
+                  } catch (err) {
+                    console.log(err);
+                    res.json({
+                      success: false,
+                      message: "Products fecthing Failed",
+                      data: err,
+                    });
+                  }
+                } else if (result === 2) {
+                  productsIds = await Productsscoresecom.findOne({
+                    name: "2",
+                  });
+                  console.log(productsIds);
+                  try {
+                    let products = await Product.find({
+                      _id: productsIds.products,
+                    });
+                    res.status(200).send({
+                      message: "Your Result is saved",
+                      success: true,
+                      products,
+                    });
+                    return;
+                  } catch (err) {
+                    console.log(err);
+                    res.json({
+                      success: false,
+                      message: "Products fecthing Failed",
+                      data: err,
+                    });
+                  }
+                } else if (result === 3) {
+                  productsIds = await Productsscoresecom.findOne({
+                    name: "3",
+                  });
+                  try {
+                    let products = await Product.find({
+                      _id: productsIds.products,
+                    });
+                    res.status(200).send({
+                      message: "Your Result is saved",
+                      success: true,
+                      products,
+                    });
+                    return;
+                  } catch (err) {
+                    console.log(err);
+                    res.json({
+                      success: false,
+                      message: "Products fecthing Failed",
+                      data: err,
+                    });
+                  }
+                }
+              } else {
+                res.json({
+                  success: false,
+                  message: "Saving user result failed",
+                });
+                return;
+              }
             }
-          } else if (result === 2) {
-            productsids = await Productsscoresecom.findOne({ name: "2" });
-            try {
-              let products = await Product.find({
-                _id: productsIds.products,
-              });
-              res.status(200).send({
-                message: "Your Result is saved",
-                success: true,
-                products,
-              });
-              return;
-            } catch (err) {
-              console.log(err);
-              res.json({
-                success: false,
-                message: "Products fecthing Failed",
-                data: err,
-              });
-            }
-          } else if (result === 3) {
-            productsIds = await Productsscoresecom.findOne({ name: "3" });
-            try {
-              let products = await Product.find({
-                _id: productsIds.products,
-              });
-              res.status(200).send({
-                message: "Your Result is saved",
-                success: true,
-                products,
-              });
-              return;
-            } catch (err) {
-              console.log(err);
-              res.json({
-                success: false,
-                message: "Products fecthing Failed",
-                data: err,
-              });
-            }
-          }
+          );
         }
       });
     } catch (err) {
@@ -205,10 +232,26 @@ const saveQuizResult = async (req, res) => {
   }
 };
 
+const getQuizResult = async (req, res) => {
+  const { userId } = req.body;
+
+  const result = await Quizresult.findOne({ user: userId });
+  if (result) {
+    res.json({
+      success: true,
+      message: "This is User First Result",
+      result: result,
+    });
+  } else {
+    res.json({ success: false, message: "User result not found" });
+  }
+};
+
 module.exports = {
   addQuestion,
   getQuestions,
   saveQuizResult,
   editQuestion,
   deleteQuestion,
+  getQuizResult,
 };

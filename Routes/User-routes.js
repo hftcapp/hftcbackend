@@ -18,4 +18,6 @@ router.post("/editbio", usersController.editBio);
 router.post("/edituserinfo", usersController.editUserInfo);
 router.post("/edituserimage", usersController.updateUserImage);
 
+router.post("/getuserlatestquizresult", usersController.getUserLatestResult);
+
 module.exports = router;

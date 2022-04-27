@@ -17,6 +17,10 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  latestResult: {
+    type: Schema.Types.ObjectId,
+    ref: "Quizresult",
+  },
 });
 
 // userSchema.plugin(uniqueValidator);

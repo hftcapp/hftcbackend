@@ -3,6 +3,9 @@ var otpGenerator = require("otp-generator");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
+const Quizresult = require("../Models/Quizresult");
+const Weekquizresult = require("../Models/Weekquizresult");
+const Monthquizresult = require("../Models/Monthquizresult");
 const { JWTKEY } = require("../Config/config");
 
 const getUsers = async (req, res, next) => {
@@ -329,6 +332,7 @@ const login = async (req, res, next) => {
     image: existingUser.image,
     bio: existingUser.bio,
     birthday: existingUser.birthday,
+    latestResult: existingUser.latestResult,
   });
 };
 
@@ -474,6 +478,45 @@ const updateUserImage = async (req, res) => {
   }
 };
 
+const getUserLatestResult = async (req, res) => {
+  const { userId } = req.body;
+  const userData = await User.findOne({ _id: userId }, "-password");
+  const latestResultId = userData.latestResult;
+
+  let foundQuizResult = await Quizresult.findOne({ _id: latestResultId });
+  if (foundQuizResult) {
+    res.json({
+      success: true,
+      message: " Result Found",
+      result: foundQuizResult,
+    });
+    return;
+  }
+
+  foundQuizResult = await Weekquizresult.findOne({ _id: latestResultId });
+  if (foundQuizResult) {
+    res.json({
+      success: true,
+      message: "Latest Result Found",
+      result: foundQuizResult,
+    });
+    return;
+  }
+
+  foundQuizResult = await Monthquizresult.findOne({ _id: latestResultId });
+  if (foundQuizResult) {
+    res.json({
+      success: true,
+      message: "Latest Result Found",
+      result: foundQuizResult,
+    });
+    return;
+  } else {
+    res.json({ success: false, message: "No Result found for that user" });
+    return;
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -485,4 +528,5 @@ module.exports = {
   editBio,
   editUserInfo,
   updateUserImage,
+  getUserLatestResult,
 };

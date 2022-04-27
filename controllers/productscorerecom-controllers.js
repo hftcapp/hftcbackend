@@ -80,6 +80,7 @@ const getLists = async (req, res) => {
 
 const getSingleList = async (req, res) => {
   const { name } = req.body;
+  console.log(req.body);
   if (name === 1) {
     products = await Productscorerecom.findOne({ name: "1" });
     res.status(200).send({

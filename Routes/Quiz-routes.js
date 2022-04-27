@@ -9,5 +9,6 @@ router.post("/addquestion", quizController.addQuestion);
 router.post("/editquestion", quizController.editQuestion);
 router.post("/deletequestion", quizController.deleteQuestion);
 router.post("/savequizresult", quizController.saveQuizResult);
+router.post("/getquizresult", quizController.getQuizResult);
 
 module.exports = router;
