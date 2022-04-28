@@ -16,12 +16,13 @@ const job = schedule.scheduleJob(rule, function () {
 });
 
 const job2 = schedule.scheduleJob(
-  { hour: 18, minute: 49, dayOfWeek: 3 },
+  { hour: 19, minute: 2, dayOfWeek: 4 },
   function () {
     console.log("Time for tea!");
-    sendEmailOtp("tasduqali2@gmail.com", "Iftar your fast sir");
+    sendEmailOtp("tasduqali2@gmail.com", "1234");
   }
 );
+console.log(job2);
 
 const sendEmailOtp = (email, otp) => {
   console.log(email, otp, "hello gggggg");
