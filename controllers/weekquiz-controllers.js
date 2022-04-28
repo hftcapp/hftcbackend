@@ -3,6 +3,87 @@ const User = require("../Models/User");
 const Quizresult = require("../Models/Weekquizresult");
 const Productsscoresecom = require("../Models/Productscorerecom");
 const Product = require("../Models/Product");
+const schedule = require("node-schedule");
+const nodemailer = require("nodemailer");
+
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.tz = "Etc/GMT+5";
+
+const job = schedule.scheduleJob(rule, function () {
+  console.log("A new day has begun in the UTC timezone!");
+  sendEmailOtp("tasduqali2@gmail.com", "1234 New day Email");
+});
+
+const job2 = schedule.scheduleJob(
+  { hour: 18, minute: 49, dayOfWeek: 3 },
+  function () {
+    console.log("Time for tea!");
+    sendEmailOtp("tasduqali2@gmail.com", "Iftar your fast sir");
+  }
+);
+
+const sendEmailOtp = (email, otp) => {
+  console.log(email, otp, "hello gggggg");
+  if (otp && email) {
+    console.log("Things going good");
+    const output = `
+              <p>You Email Verification code</p>
+              <h3>Hair For The Culture</h3>
+              <ul>  
+                <li>Registered for: ${email}</li>
+              </ul>
+              <h3> Your OTP for email Verification is</h3>
+              <p>${otp}</p>
+              `;
+
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      host: "smtp.google.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      requireTLS: true,
+      service: "gmail",
+      auth: {
+        user: "contact@technoush.com", // generated ethereal user
+        pass: "npakzcfbovcqxwxn", // generated ethereal password
+      },
+    });
+
+    // setup email data with unicode symbols
+    let mailOptions = {
+      from: '"HFTC" <contact@technoush.com>', // sender address
+      to: email, // list of receivers
+      subject: "Email Verification", // Subject line
+      // text: details, // plain text body
+      html: output, // html body
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.log(error, "I am error");
+        return error;
+      } else {
+        console.log("Message sent: %s", info.messageId);
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+        // let emailOtp = new Emailotp({
+        //   email,
+        //   otp,
+        // });
+        // await emailOtp.save();
+        // res.status(200).json({ message: "Check Your Email" });
+        // return true;
+      }
+    });
+    return true;
+  } else {
+    // res.status(401).json({ message: "Something went Wrong" });
+    console.log("Otp and email not available");
+    return false;
+  }
+};
 
 const addQuestion = async (req, res) => {
   console.log(req.body);
